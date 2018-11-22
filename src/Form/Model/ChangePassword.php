@@ -20,7 +20,11 @@ class ChangePassword
 
     /**
      * @Assert\NotBlank(message = "Please enter a new password")
-     * @var string The hashed password
+     * /**
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 20
+     *     )
      * @ORM\Column(type="string")
      */
     private $password;

@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @IsGranted("ROLE_SUPER_ADMIN")
  * @Route("/users")
+ *
+ * Also see `role_hierarchy` in config/packages/security.yaml
  */
 class AdminUsersController extends AbstractController
 {
@@ -39,35 +41,69 @@ class AdminUsersController extends AbstractController
     }
 
     /**
-     * @Route("/add-edit/{id}", name="admin_users_add_edit")
+     * @Route("/add", name="admin_users_add")
      */
-    public function addEdit(Request $request, int $id = 0)
+    public function add(Request $request)
     {
-        $user = $id > 0
-            ? $this->adminUsersManager->getById($id)
-            : new User();
-
+        $user = new User();
         $form = $this->createForm(UserFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->adminUsersManager->save($user);
+            $this->adminUsersManager->addUser($user);
 
             return $this->redirectToRoute('admin_users_list');
         }
 
         return $this->render('admin/users/add_edit.html.twig', [
             'form' => $form->createView(),
-            'editMode' => $user->getId()
+            'editMode' => false
+        ]);
+    }
+
+    /**
+     * @Route("/edit/{id}", name="admin_users_edit")
+     */
+    public function edit(Request $request, int $id = 0)
+    {
+        $user = $this->adminUsersManager->getById($id);
+        if (!$user) {
+            throw $this->createNotFoundException('The user does not exist');
+        }
+
+        $form = $this->createForm(UserFormType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->adminUsersManager->addOrUpdate($user);
+
+            return $this->redirectToRoute('admin_users_list');
+        }
+
+        return $this->render('admin/users/add_edit.html.twig', [
+            'form' => $form->createView(),
+            'editMode' => true
         ]);
     }
 
     /**
      * @Route("/delete/{id}", name="admin_users_delete")
      */
-    public function delete(int $id = 0): RedirectResponse
+    public function delete(User $user): RedirectResponse
     {
-        $this->adminUsersManager->deleteById($id);
+        $this->adminUsersManager->deleteUser($user);
+
+        return $this->redirectToRoute('admin_users_list');
+    }
+
+    /**
+     * @Route("/disable/{id}/{status}", name="admin_users_disable", requirements={
+     *         "status": "1|0"})
+     */
+    public function disable(User $user, bool $status): RedirectResponse
+    {
+        $user->setDisabled($status);
+        $this->adminUsersManager->addOrUpdate($user);
 
         return $this->redirectToRoute('admin_users_list');
     }

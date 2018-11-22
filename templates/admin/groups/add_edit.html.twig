@@ -2,10 +2,18 @@
 {% block body %}
     <b>Add/Edit Group</b>
 
+
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
     {{ form_row(form.name) }}
     {{ form_row(form.roles) }}
 
     <button type="submit">Save</button>
+    <small id="emailHelp" class="form-text text-muted">
+        <ul>
+            <li>ROLE_ADMIN is mandatory to be assigned to a group in order for user to access admin dashboard.
+            <li>To see/manage the 'articles` link, create a group (e.g GROUP_EDITOR_ADMIN) with ROLE_ADMIN & ROLE_EDITOR roles assigned.
+        </ul>
+    </small>
+
     {{ form_end(form) }}
 {% endblock %}

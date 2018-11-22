@@ -24,19 +24,18 @@ class AdminEntityManager
         return $this->entityRepository->findAll();
     }
 
-    public function save($entity): void
+    public function addOrUpdate(object $entity): void
     {
         if ($entity->getId() === null) {
             $this->entityManager->persist($entity);
         }
-        
+
         $this->entityManager->flush();
     }
 
-    public function deleteById(int $id): void
+    public function delete(object $entity): void
     {
-        $role = $this->getById($id);
-        $this->entityManager->remove($role);
+        $this->entityManager->remove($entity);
         $this->entityManager->flush();
     }
 

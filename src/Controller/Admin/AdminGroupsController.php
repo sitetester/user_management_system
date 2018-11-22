@@ -6,14 +6,17 @@ namespace App\Controller\Admin;
 use App\Entity\Group;
 use App\Form\GroupFormType;
 use App\Service\Admin\AdminGroupsManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * `/admin` prefix already applied in /config/packages/routing.yaml
+ * @IsGranted("ROLE_SUPER_ADMIN")
  * @Route("/groups")
+ *
+ * Also see role_hierarchy in config/packages/security.yaml
  */
 class AdminGroupsController extends AbstractController
 {
@@ -35,19 +38,25 @@ class AdminGroupsController extends AbstractController
     }
 
     /**
+     * For further work, divide into separate actions
+     *
      * @Route("/add-edit/{id}", name="admin_groups_add_edit")
      */
     public function addEdit(Request $request, int $id = 0)
     {
-        $group = $id > 0 ?
-            $this->adminGroupsManager->getById($id) :
-            new Group();
+        $group = new Group();
+        if ($id) {
+            $group = $this->adminGroupsManager->getById($id);
+            if (!$group) {
+                throw $this->createNotFoundException('The group does not exist');
+            }
+        }
 
         $form = $this->createForm(GroupFormType::class, $group);
-
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->adminGroupsManager->save($group);
+            $this->adminGroupsManager->addOrUpdate($group);
 
             return $this->redirectToRoute('admin_groups_list');
         }
@@ -60,14 +69,13 @@ class AdminGroupsController extends AbstractController
     /**
      * @Route("/delete/{id}", name="admin_groups_delete")
      */
-    public function delete(int $id = 0): Response
+    public function delete(Group $group): Response
     {
-        $group = $this->adminGroupsManager->getById($id);
         if (!$group->getUsers()->isEmpty()) {
-            throw new \Exception('Group can\'t be deleted with assigned users.');
+            throw new \UnexpectedValueException('Group can\'t be deleted with assigned users.');
         }
 
-        $this->adminGroupsManager->deleteGroup($group);
+        $this->adminGroupsManager->delete($group);
 
         return $this->redirectToRoute('admin_groups_list');
     }

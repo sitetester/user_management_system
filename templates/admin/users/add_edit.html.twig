@@ -11,5 +11,9 @@
     {{ form_row(form.userGroups) }}
 
     <button type="submit">Save</button>
+    <small id="emailHelp" class="form-text text-muted">To access admin dashboard, a group with ROLE_ADMIN must be assigned</small>
+
+
+
     {{ form_end(form) }}
 {% endblock %}

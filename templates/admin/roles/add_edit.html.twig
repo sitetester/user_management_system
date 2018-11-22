@@ -4,5 +4,15 @@
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
     {{ form_row(form.role) }}
     <button type="submit">Save</button>
+    <small id="emailHelp" class="form-text text-muted">
+        <ul>
+            <li>ROLE_ADMIN is mandatory to be created & assigned to a group in order for user to access admin
+                dashboard.
+            </li>
+            <li>ROLE_EDITOR is mandatory to be created & assigned to a group in order for user to see the 'Articles`
+                link.
+            </li>
+    </small>
+    </ul>
     {{ form_end(form) }}
 {% endblock %}

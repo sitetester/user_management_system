@@ -9,7 +9,7 @@ use Twig\TwigFilter;
 /**
  * https://symfony.com/doc/current/templating/twig_extension.html
  */
-class AppTruncateExtension extends AbstractExtension
+class AppAdjustLengthExtension extends AbstractExtension
 {
     public function getFilters(): array
     {

@@ -3,14 +3,16 @@
     <h3>Users</h3>
     <table border="1" width="50%">
         <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Group(s)</th>
-            <th><a href="{{ path('admin_users_add_edit') }}">New</a></th>
+            <th>Assigned Group(s)</th>
+            <th><a href="{{ path('admin_users_add') }}">New</a></th>
         </tr>
         {% for user in users %}
             <tr>
-                <td><a href="{{ path('admin_users_add_edit', {'id': user.id }) }}">{{ user.name }}</a></td>
+                <td>{{ user.id }}</td>
+                <td><a href="{{ path('admin_users_edit', {'id': user.id }) }}">{{ user.name }}</a></td>
                 <td>{{ user.email }}</td>
                 <td>
                     {% for index, userGroup in user.userGroups %}
@@ -22,7 +24,15 @@
 
                     {% if user.id is not same as (app.user.id) %}
                         <a href="{{ path('admin_users_delete', {'id': user.id }) }}"
-                           onclick="return confirm('Confirm delete?')">Delete</a>
+                           onclick="return confirm('Confirm delete? User will be permanently deleted & association with assigned groups will be lost.')">Delete</a> |
+
+                        {% if user.disabled %}
+                            <a href="{{ path('admin_users_disable', {'id': user.id, 'status': 0 }) }}"
+                               onclick="return confirm('Confirm enable? User will be able to login the system')">Enable</a>
+                        {% else %}
+                            <a href="{{ path('admin_users_disable', {'id': user.id,  'status': 1 }) }}"
+                               onclick="return confirm('Confirm disable? Disabled users can\'t login to system')">Disable</a>
+                        {% endif %}
                     {% endif %}
                 </td>
             </tr>

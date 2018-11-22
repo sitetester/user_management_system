@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -20,7 +21,7 @@ class ChangePasswordController extends Controller
     }
 
     /**
-     * @Route("/change_password", name="app_change_password")
+     * @Route("/change_password", name="change_password")
      * @return Response
      */
     public function changePasswordAction(Request $request): Response
@@ -45,11 +46,11 @@ class ChangePasswordController extends Controller
                     'Password updated successfully!'
                 );
             }
+
+            return $this->redirectToRoute('admin_dashboard');
         }
 
-        // dispatch event and confirm listener is getting invoked
-
-        return $this->render('changePassword/change_password.html.twig', [
+        return $this->render('change_password/change_password.html.twig', [
             'form' => $form->createView()
         ]);
     }

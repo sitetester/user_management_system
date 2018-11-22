@@ -39,7 +39,6 @@ class Role
         $this->groups = new ArrayCollection();
     }
 
-
     public function getId(): ?int
     {
         return $this->id;

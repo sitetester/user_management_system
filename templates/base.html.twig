@@ -14,7 +14,7 @@
 <body>
 
 {% if app.user %}
-    <div id="header_menu">
+    <div style="margin-bottom: 20px">
 
         {% if is_granted('ROLE_SUPER_ADMIN') %}
             <a href="{{ path('admin_users_list') }}">Users</a> |
@@ -25,23 +25,24 @@
         {% if is_granted('ROLE_EDITOR') %}
             <a href="{{ path('admin_articles_list') }}">Articles</a>
         {% endif %}
-        
+
         - Welcome, {{ app.user.name }}! |
 
-        <a href="{{ path('app_change_password') }}"> Change Password</a>
+        <a href="{{ path('change_password') }}"> Change Password</a> |
         <a href="{{ path('app_logout') }}"> Logout</a>
     </div>
 {% endif %}
 
 
-{% for label, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="flash-{{ label }}">
-            {{ message }}
-        </div>
+<div style="text-align: center">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
-
+</div>
 
 <div class="container-fluid">
     {% block body %}{% endblock %}

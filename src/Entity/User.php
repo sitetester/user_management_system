@@ -12,6 +12,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * Additional fields (e.g deleted, locked, expired) can be added to this entity to provide extra functionality
+ * App\Security\UserChecker will show customized error message based on corresponding field(s)
+ *
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table("users")
@@ -35,7 +38,6 @@ class User implements UserInterface
 
     /**
      * @Assert\NotBlank
-     * @var string The hashed password
      * @ORM\Column(type="string")
      */
     private $password;
@@ -49,7 +51,6 @@ class User implements UserInterface
     /**
      * Intentionally not mapped
      * In this case, roles are actually retrieved from DB table (roles_groups) based on group assigned to this user
-     * @var array
      */
     private $roles = [];
 
@@ -58,6 +59,13 @@ class User implements UserInterface
      * @JoinTable(name="users_groups")
      */
     private $userGroups;
+
+    /**
+     * Disabled user can't login to system, this might be used over 'delete' functionality
+     * @ORM\Column(type="boolean")
+     */
+    private $disabled = false;
+
 
     public function __construct()
     {
@@ -102,6 +110,7 @@ class User implements UserInterface
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
+        // fetch dynamic roles from DB
         foreach ($this->userGroups as $userGroup) {
             /** @var Role[] $userGroupRoles */
             $userGroupRoles = $userGroup->getRoles();
@@ -110,7 +119,6 @@ class User implements UserInterface
             }
         }
 
-        print_r($roles);// exit;
         return array_unique($roles);
     }
 
@@ -189,6 +197,18 @@ class User implements UserInterface
             $this->userGroups->removeElement($group);
             $group->removeUser($this);
         }
+
+        return $this;
+    }
+
+    public function getDisabled(): ?bool
+    {
+        return $this->disabled;
+    }
+
+    public function setDisabled(bool $disabled): self
+    {
+        $this->disabled = $disabled;
 
         return $this;
     }

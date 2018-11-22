@@ -16,9 +16,17 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            # https://symfony.com/doc/master/security/form_login.html
+            form_login:
+                csrf_token_generator: security.csrf.token_manager
+                default_target_path: admin_dashboard
+                always_use_default_target_path: true
+                use_referer: false
+
             anonymous: true
             logout:
                 path:   app_logout
+                target: app_login
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
@@ -32,13 +40,16 @@ security:
 
             # form_login: true
             # https://symfony.com/doc/current/security/form_login_setup.html
+            user_checker: App\Security\UserChecker
+            switch_user: true
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_EDITOR, ROLE_ALLOWED_TO_SWITCH]
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/profile, roles: ROLE_USER }

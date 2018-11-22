@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
@@ -13,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Dummy controller, just to check logged in user permission (ROLE)
+ * See UserFixture::loadEditorAdmin
  *
  * @IsGranted("ROLE_EDITOR")
  * @Route("/articles")
@@ -29,7 +31,7 @@ class AdminArticlesController extends AbstractController
     /**
      * @Route("/", name="admin_articles_list")
      */
-    public function index()
+    public function index(): Response
     {
         return $this->render('admin/articles/list.html.twig', [
             'articles' => $this->adminArticlesManager->getAll()
@@ -37,19 +39,26 @@ class AdminArticlesController extends AbstractController
     }
 
     /**
+     * For further work, divide into separate actions
+     *
      * @Route("/add-edit/{id}", name="admin_articles_add_edit")
      */
     public function addEdit(Request $request, int $id = 0): Response
     {
-        $article = $id > 0 ?
-            $this->adminArticlesManager->getById($id) :
-            new Article();
+        $article = new Article();
+
+        if ($id) {
+            $article = $this->adminArticlesManager->getById($id);
+            if (!$article) {
+                throw $this->createNotFoundException('The article does not exist');
+            }
+        }
 
         $form = $this->createForm(ArticleFormType::class, $article);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->adminArticlesManager->save($article);
+            $this->adminArticlesManager->addOrUpdate($article);
 
             return $this->redirectToRoute('admin_articles_list');
         }
@@ -62,9 +71,9 @@ class AdminArticlesController extends AbstractController
     /**
      * @Route("/delete/{id}", name="admin_articles_delete")
      */
-    public function delete(int $id = 0): Response
+    public function delete(Article $article): Response
     {
-        $this->adminArticlesManager->deleteById($id);
+        $this->adminArticlesManager->delete($article);
 
         return $this->redirectToRoute('admin_articles_list');
     }

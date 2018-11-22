@@ -11,11 +11,15 @@ class ArticlesFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $manager->persist(
-            (new Article())
-                ->setTitle('Test Article 1')
-                ->setContents('test articles contents')
-        );
+        for ($i = 0; $i < 10; $i++) {
+            $article = new Article();
+            $article
+                ->setTitle('Test Article #' . $i)
+                ->setContents('Test article #' . $i . ' contents')
+            ;
+
+            $manager->persist($article);
+        }
 
         $manager->flush();
     }

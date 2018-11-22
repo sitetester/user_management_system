@@ -1,41 +1,33 @@
 <?php
+declare(strict_types=1);
+
 namespace App\Security;
 
-use App\Exception\AccountDeletedException;
-use App\Security\User as AppUser;
-use Symfony\Component\Security\Core\Exception\AccountExpiredException;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * https://symfony.com/doc/current/security/user_checkers.html
+ */
 class UserChecker implements UserCheckerInterface
 {
-    public function checkPreAuth(UserInterface $user)
+    public function checkPreAuth(UserInterface $user): void
     {
-        if (!$user instanceof AppUser) {
-            return;
-        }
-
-        // user is deleted, show a generic Account Not Found message.
-        if ($user->isDeleted()) {
-            throw new AccountDeletedException('...');
-
-            // or to customize the message shown
+        /** @var User $user */
+        if ($user->getDisabled()) {
             throw new CustomUserMessageAuthenticationException(
-                'Your account was deleted. Sorry about that!'
+                'Your account is disabled. Please contact administrator!'
             );
         }
+
+        // perform other checks e.g account deleted
     }
 
-    public function checkPostAuth(UserInterface $user)
+    public function checkPostAuth(UserInterface $user): void
     {
-        if (!$user instanceof AppUser) {
-            return;
-        }
-
-        // user account is expired, the user may be notified
-        if ($user->isExpired()) {
-            throw new AccountExpiredException('...');
-        }
+        /** @var User $user */
+        // perform other checks, e.g  user account is expired
     }
 }

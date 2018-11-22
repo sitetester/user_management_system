@@ -1,28 +1,33 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <h3>Groups</h3>
-    <table border="1" width="50%" >
+    <table border="1" width="50%">
         <tr>
             <th>Name</th>
-            <th>Role(s)</th>
-            <th>No. of Assigned Users</th>
+            <th>Assigned Role(s)</th>
+            <th>Assigned User(s) ID</th>
             <th width="10%"><a href="{{ path('admin_groups_add_edit') }}">New</a></th>
         </tr>
         {% for group in groups %}
             <tr>
                 <td><a href="{{ path('admin_groups_add_edit', {'id': group.id }) }}">{{ group.name }}</a></td>
                 <td>
-                    {% for index, groupRoles in group.roles %}
+                    {% for index, groupRole in group.roles %}
                         {% if index > 0 %},{% endif %}
-                        {{ groupRoles.role }}
+                        {{ groupRole.role }}
                     {% endfor %}
                 </td>
-                <td>{{ group.users|length }}</td>
+                <td>
+                    {% for index, user in group.users %}
+                        {% if index > 0 %}, {% endif %}
+                        {{ user.id }}
+                    {% endfor %}
+                </td>
                 <td>
                     {% if group.users|length == 0 %}
                         <a class="fa fa-close"
-                                href="{{ path('admin_groups_delete', {'id': group.id }) }}"
-                                onclick="return confirm('Confirm delete?')"
+                           href="{{ path('admin_groups_delete', {'id': group.id }) }}"
+                           onclick="return confirm('Confirm delete?')"
                         >Delete</a>
                     {% endif %}
                 </td>

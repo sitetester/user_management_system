@@ -23,27 +23,21 @@ class AdminUsersManager extends AdminEntityManager
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param User $entity
-     */
-    public function save($entity): void
+    public function addUser(User $entity): void
     {
-        parent::save($entity);
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
 
         $event = new UserRegisteredEvent($entity);
         $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
     }
 
-    public function deleteById(int $id): void
+    public function deleteUser(User $user): void
     {
-        /** @var User $user */
-        $user = $this->getById($id);
-        if ($user) {
-            $this->deleteUserGroups($user);
+        $this->deleteUserGroups($user);
 
-            $this->entityManager->remove($user);
-            $this->entityManager->flush();
-        }
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
     }
 
     /**
