@@ -22,14 +22,20 @@ class UserChecker implements UserCheckerInterface
             );
         }
 
-        // perform other checks e.g account deleted, expired
+        // perform other checks e.g account deleted
         // these fields need to be defined in User entity.
         // `deleted` will only change DB status, rather than actually deleting the user.
     }
 
+    /**
+     * https://symfony.com/doc/current/event_dispatcher.html#creating-an-event-listener
+     *
+     * @param UserInterface $user
+     */
     public function checkPostAuth(UserInterface $user): void
     {
         /** @var User $user */
         // perform other checks, e.g  user account is expired
+        // throw AccountExpiredException, create an AppExceptionListener to handle such exceptions
     }
 }
