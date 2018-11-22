@@ -34,8 +34,7 @@ class UserChecker implements UserCheckerInterface
      */
     public function checkPostAuth(UserInterface $user): void
     {
-        /** @var User $user */
-        // perform other checks, e.g  user account is expired
+        // perform other checks, e.g user account is expired, the user may be notified
         // throw AccountExpiredException, create an AppExceptionListener to handle such exceptions
     }
 }
