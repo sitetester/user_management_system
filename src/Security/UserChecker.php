@@ -22,7 +22,9 @@ class UserChecker implements UserCheckerInterface
             );
         }
 
-        // perform other checks e.g account deleted
+        // perform other checks e.g account deleted, expired
+        // these fields need to be defined in User entity.
+        // `deleted` will only change DB status, rather than actually deleting the user.
     }
 
     public function checkPostAuth(UserInterface $user): void
