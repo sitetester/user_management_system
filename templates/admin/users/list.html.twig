@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h3>Users</h3>
+    <table border="1" width="50%">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Group(s)</th>
+            <th><a href="{{ path('admin_users_add_edit') }}">New</a></th>
+        </tr>
+        {% for user in users %}
+            <tr>
+                <td><a href="{{ path('admin_users_add_edit', {'id': user.id }) }}">{{ user.name }}</a></td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% for index, userGroup in user.userGroups %}
+                        {% if index > 0 %} , {% endif %}
+                        {{ userGroup.name }}
+                    {% endfor %}
+                </td>
+                <td>
+
+                    {% if user.id is not same as (app.user.id) %}
+                        <a href="{{ path('admin_users_delete', {'id': user.id }) }}"
+                           onclick="return confirm('Confirm delete?')">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

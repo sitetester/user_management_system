@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h3>Roles</h3>
+    <table border="1" width="50%">
+        <tr>
+            <th>Role</th>
+            <th>No. of Assigned Groups</th>
+            <th width="10%"><a href="{{ path('admin_roles_add_edit') }}">New</a></th>
+        </tr>
+        {% for role in roles %}
+            <tr>
+                <td><a href="{{ path('admin_roles_add_edit', {'id': role.id }) }}">{{ role.role }}</a></td>
+                <td>{{ role.groups|length }}</td>
+                <td>
+                    {% if role.groups|length == 0 %}
+                        <a href="{{ path('admin_roles_delete', {'id': role.id }) }}"
+                           onclick="return confirm('Confirm delete?')">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

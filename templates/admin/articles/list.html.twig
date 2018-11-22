@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h3>Articles</h3>
+    <table border="1" width="50%">
+        <tr>
+            <th>Title</th>
+            <th>Contents</th>
+            <th><a href="{{ path('admin_users_add_edit') }}">New</a></th>
+        </tr>
+        {% for article in articles %}
+            <tr>
+                <td><a href="{{ path('admin_articles_add_edit', {'id': article.id }) }}">{{ article.title }}</a></td>
+                <td>{{ article.contents|length > 50 ? article.contents|slice(0, 50) ~ '...' : article.contents }}</td>
+                <td>
+
+                    <a href="{{ path('admin_articles_delete', {'id': article.id }) }}"
+                       onclick="return confirm('Confirm delete?')">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <b>Add/Edit Article</b>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.contents) }}
+
+    <button type="submit">Save</button>
+    {{ form_end(form) }}
+{% endblock %}

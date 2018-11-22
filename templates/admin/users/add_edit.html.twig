@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <b>Add/Edit User</b>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.email) }}
+    {% if not editMode %}
+        {{ form_row(form.password.first) }}
+        {{ form_row(form.password.second) }}
+    {% endif %}
+    {{ form_row(form.userGroups) }}
+
+    <button type="submit">Save</button>
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,7 @@
+# this URL is used in /src/Security/LoginFormAuthenticator.php
+admin_home:
+  path: /
+  controller: App\Controller\AdminController::index
+
+app_logout:
+  path: /logout

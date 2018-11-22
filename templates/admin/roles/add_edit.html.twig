@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <b>Add/Edit Role</b>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.role) }}
+    <button type="submit">Save</button>
+    {{ form_end(form) }}
+{% endblock %}
